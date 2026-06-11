@@ -6,7 +6,7 @@ The specification language is **SPL** (Symbolic Process Language). The CLI binar
 
 - **Project site:** https://saple.cloud
 - **Documentation:** https://saple.cloud/docs/
-- **Latest release:** [v0.1.0](https://github.com/smander/SAPLE/releases/tag/v0.1.0)
+- **Latest release:** [v0.1.0](https://github.com/smander/saple/releases/tag/v0.1.0)
 
 ---
 
@@ -18,8 +18,8 @@ Prebuilt binaries are available below. Both bundle Z3 4.16.0 statically — no e
 
 | Platform | File | Direct link |
 |---|---|---|
-| **Windows (x64)** | `saple-windows-x64.zip` | [Releases page](https://github.com/smander/SAPLE/releases/latest/download/saple-windows-x64.zip) |
-| **macOS (universal-2)** | `saple-macos.dmg`       | [Releases page](https://github.com/smander/SAPLE/releases/latest/download/saple-macos.dmg) |
+| **Windows (x64)** | `saple-windows-x64.zip` | [Releases page](https://github.com/smander/saple/releases/latest/download/saple-windows-x64.zip) |
+| **macOS (universal-2)** | `saple-macos.dmg`       | [Releases page](https://github.com/smander/saple/releases/latest/download/saple-macos.dmg) |
 
 ### From this repository
 
