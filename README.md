@@ -4,8 +4,9 @@ A general-purpose **formal verification framework**. SAPLE models concurrent sys
 
 The specification language is **SPL** (Symbolic Process Language). The CLI binary is `saple`.
 
-**Project site:** https://saple.cloud
-**Documentation:** https://saple.cloud/docs/
+- **Project site:** https://saple.cloud
+- **Documentation:** https://saple.cloud/docs/
+- **Latest release:** [v0.1.0](https://github.com/smander/SAPLE/releases/tag/v0.1.0)
 
 ---
 
