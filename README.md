@@ -4,8 +4,8 @@ A general-purpose **formal verification framework**. SAPLE models concurrent sys
 
 The specification language is **SPL** (Symbolic Process Language). The CLI binary is `saple`.
 
-**Project site:** https://dark-wood-9455.workers.dev
-**Documentation:** https://dark-wood-9455.workers.dev/docs/
+**Project site:** https://saple.cloud
+**Documentation:** https://saple.cloud/docs/
 
 ---
 
@@ -104,7 +104,7 @@ saple test      file.sbl --coverage state
 saple translate input.s --arch x86-64 -o out.sbl
 ```
 
-See the [full CLI reference](https://dark-wood-9455.workers.dev/docs/getting-started/cli) on the docs site.
+See the [full CLI reference](https://saple.cloud/docs/getting-started/cli) on the docs site.
 
 ---
 
