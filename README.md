@@ -20,6 +20,8 @@ Prebuilt binaries are available below. Both bundle Z3 4.16.0 statically — no e
 |---|---|---|
 | **Windows (x64)** | `saple-windows-x64.zip` | [Releases page](https://github.com/smander/saple/releases/latest/download/saple-windows-x64.zip) |
 | **macOS (universal-2)** | `saple-macos.dmg`       | [Releases page](https://github.com/smander/saple/releases/latest/download/saple-macos.dmg) |
+| **Linux (Ubuntu / Debian)** | `saple-linux-x64.deb`   | [Releases page](https://github.com/smander/saple/releases/latest/download/saple-linux-x64.deb) |
+| **Linux (CentOS / RHEL / Fedora)** | `saple-linux-x64.rpm` | [Releases page](https://github.com/smander/saple/releases/latest/download/saple-linux-x64.rpm) |
 
 ### From this repository
 
@@ -27,6 +29,8 @@ The current build is also tracked here for convenience:
 
 - [`downloads/saple-windows-x64.zip`](downloads/saple-windows-x64.zip) (17 MB)
 - [`downloads/saple-macos.dmg`](downloads/saple-macos.dmg) (20 MB)
+- [`downloads/saple-linux-x64.deb`](downloads/saple-linux-x64.deb) (11 MB)
+- [`downloads/saple-linux-x64.rpm`](downloads/saple-linux-x64.rpm) (12 MB)
 
 ---
 
@@ -52,6 +56,22 @@ sudo install -m 0755 /Volumes/SAPLE/saple /usr/local/bin/saple
 hdiutil detach /Volumes/SAPLE
 saple --version
 ```
+
+### Linux (Ubuntu / Debian)
+
+```bash
+sudo apt install ./saple-linux-x64.deb
+saple --version
+```
+
+### Linux (CentOS / RHEL / Fedora)
+
+```bash
+sudo rpm -i saple-linux-x64.rpm
+saple --version
+```
+
+The Linux binary is fully static (musl libc, Z3 4.16.0 bundled) — no system dependencies.
 
 The macOS binary is unsigned. On first run Gatekeeper will block it; open **System Settings → Privacy & Security** and click **Open Anyway**, then re-run.
 

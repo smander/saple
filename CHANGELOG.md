@@ -2,6 +2,14 @@
 
 All notable changes to SAPLE are documented here.
 
+## v0.2.0 — 2026-06-12
+
+### Highlights
+
+- **Linux x86_64 distribution added**: `saple-linux-x64.deb` (Ubuntu/Debian) and `saple-linux-x64.rpm` (CentOS/RHEL/Fedora).
+- Linux binary is fully static (musl libc + Z3 4.16.0 bundled, no system dependencies).
+- Website + README now expose all four download targets.
+
 ## v0.1.0 — 2026-06-11
 
 First public binary release.
