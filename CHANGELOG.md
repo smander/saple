@@ -2,7 +2,7 @@
 
 All notable changes to SAPLE are documented here.
 
-## v0.2.0 — 2026-06-21
+## v0.2.1 — 2026-06-21
 
 ### Engine kernel
 
