@@ -2,7 +2,7 @@
 
 All notable changes to SAPLE are documented here.
 
-## Unreleased — 2026-09-19
+## v0.2.2 — 2026-09-19
 
 ### Naming and packaging
 
