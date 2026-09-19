@@ -2,6 +2,13 @@
 
 All notable changes to SAPLE are documented here.
 
+## Unreleased — 2026-09-19
+
+### Naming and packaging
+
+- **Specification files use the `.spl` extension.** Every shipped `.sbl` file was renamed to `.spl`, and `saple analyze` now accepts `.spl` as canonical while still accepting `.sbl` for legacy files.
+- **Packages rebuilt** from the migrated tree with Z3 4.16.0 statically linked: `saple-windows-x64.zip`, `saple-macos.dmg`, `saple-linux-x64.deb`, `saple-linux-x64.rpm`. The binary's version string is unchanged at 0.2.0.
+
 ## v0.2.1 — 2026-06-21
 
 ### Engine kernel
@@ -13,7 +20,7 @@ All notable changes to SAPLE are documented here.
 
 ### SBL libraries
 
-- New directory `nn-verification/lib/` with six composable fragments: `relu.sbl`, `sigmoid_linear_envelope.sbl`, `tanh_linear_envelope.sbl`, `bilinear_havoc_mccormick.sbl`, `ibp_input_region.sbl`, `quantized_lut.sbl`.
+- New directory `nn-verification/lib/` with six composable fragments: `relu.spl`, `sigmoid_linear_envelope.spl`, `tanh_linear_envelope.spl`, `bilinear_havoc_mccormick.spl`, `ibp_input_region.spl`, `quantized_lut.spl`.
 - Each fragment ships with a header soundness argument.
 
 ### Parser extensions
@@ -24,8 +31,8 @@ All notable changes to SAPLE are documented here.
 
 ### Spec rewrites
 
-- `nn-verification/lstm-encoding/lstm_cell_pruned.sbl` rewritten (616 lines) to compose the σ / tanh / bilinear / IBP library fragments. Envelope coefficients documented in the header.
-- `nn-verification/autoencoder-target/autoencoder.sbl` aligned with the `relu.sbl` guarded-choice idiom (header update).
+- `nn-verification/lstm-encoding/lstm_cell_pruned.spl` rewritten (616 lines) to compose the σ / tanh / bilinear / IBP library fragments. Envelope coefficients documented in the header.
+- `nn-verification/autoencoder-target/autoencoder.spl` aligned with the `relu.spl` guarded-choice idiom (header update).
 
 ### Packaging
 
@@ -35,7 +42,7 @@ All notable changes to SAPLE are documented here.
 ### Validation
 
 - M7 toy gate (spec §5 directional-agreement fallback): SAPLE verdict and the Python+Z3 reference verifier directionally agree on the feed-forward autoencoder.
-- M8 regression sweep: all 15 baseline `.sbl` files produce verdicts bit-identical to SAPLE 0.1.0.
+- M8 regression sweep: all 15 baseline `.spl` files produce verdicts bit-identical to SAPLE 0.1.0.
 
 ### Limitations (see `nn-verification/SAPLE-STATUS.md`)
 

@@ -27,8 +27,8 @@ Prebuilt binaries are available below. Both bundle Z3 4.16.0 statically — no e
 
 The current build is also tracked here for convenience:
 
-- [`downloads/saple-windows-x64.zip`](downloads/saple-windows-x64.zip) (17 MB)
-- [`downloads/saple-macos.dmg`](downloads/saple-macos.dmg) (20 MB)
+- [`downloads/saple-windows-x64.zip`](downloads/saple-windows-x64.zip) (18 MB)
+- [`downloads/saple-macos.dmg`](downloads/saple-macos.dmg) (21 MB)
 - [`downloads/saple-linux-x64.deb`](downloads/saple-linux-x64.deb) (11 MB)
 - [`downloads/saple-linux-x64.rpm`](downloads/saple-linux-x64.rpm) (12 MB)
 
@@ -82,7 +82,7 @@ The macOS binary is unsigned. On first run Gatekeeper will block it; open **Syst
 The dining philosophers — five agents, five forks, three properties to verify:
 
 ```bash
-saple analyze dining_philosophers.sbl --verbose
+saple analyze dining_philosophers.spl --verbose
 ```
 
 Properties checked:
@@ -117,12 +117,12 @@ Translate from other formats into SPL and verify them the same way:
 ## CLI commands
 
 ```bash
-saple parse     file.sbl                # Parse and print AST
-saple analyze   file.sbl                # Verify properties + match patterns
-saple model     file.sbl --mode forward # Symbolic state-space exploration
-saple match     file.sbl --pattern p.sbl
-saple test      file.sbl --coverage state
-saple translate input.s --arch x86-64 -o out.sbl
+saple parse     file.spl                # Parse and print AST
+saple analyze   file.spl                # Verify properties + match patterns
+saple model     file.spl --mode forward # Symbolic state-space exploration
+saple match     file.spl --pattern p.spl
+saple test      file.spl --coverage state
+saple translate input.s --arch x86-64 -o out.spl
 ```
 
 See the [full CLI reference](https://saple.cloud/docs/getting-started/cli) on the docs site.
