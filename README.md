@@ -1,126 +1,156 @@
 # SAPLE — Symbolic Algebraic Process Logic Engine
 
-A general-purpose **formal verification framework**. SAPLE models concurrent systems as process equations over a shared state environment and verifies arbitrary properties — safety, liveness, mutual exclusion, custom vulnerability patterns — through structural pattern matching, symbolic execution, and SMT-based constraint solving (Z3).
+A general **formal verification framework**. You describe a system (a protocol, a concurrent algorithm, a controller) as process equations over shared state, written in its specification language **SPL**. SAPLE then checks the properties you state and the patterns you look for, with structural matching, symbolic execution and SMT solving (Z3). Through two front ends, it applies the same checks to machine code.
 
-The specification language is **SPL** (Symbolic Process Language). The CLI binary is `saple`.
+The CLI binary is `saple`.
 
-- **Project site:** https://saple.cloud
 - **Documentation:** https://saple.cloud/docs/
-- **Latest release:** [v0.1.0](https://github.com/smander/saple/releases/tag/v0.1.0)
+- **Latest release:** [v0.3.0](https://github.com/smander/saple/releases/tag/v0.3.0) ([changelog](CHANGELOG.md))
 
 ---
 
 ## Download
 
-Prebuilt binaries are available below. Both bundle Z3 4.16.0 statically — no extra install needed.
+Every package bundles Z3 4.16.0 statically, so there is nothing else to install.
 
-### Latest release (recommended)
+| Platform | File |
+|---|---|
+| **macOS** (Apple silicon and Intel) | [`saple-macos.dmg`](https://github.com/smander/saple/releases/latest/download/saple-macos.dmg) |
+| **Windows** (x64) | [`saple-windows-x64.zip`](https://github.com/smander/saple/releases/latest/download/saple-windows-x64.zip) |
+| **Linux** (Ubuntu, Debian) | [`saple-linux-x64.deb`](https://github.com/smander/saple/releases/latest/download/saple-linux-x64.deb) |
+| **Linux** (Fedora, RHEL, CentOS) | [`saple-linux-x64.rpm`](https://github.com/smander/saple/releases/latest/download/saple-linux-x64.rpm) |
 
-| Platform | File | Direct link |
-|---|---|---|
-| **Windows (x64)** | `saple-windows-x64.zip` | [Releases page](https://github.com/smander/saple/releases/latest/download/saple-windows-x64.zip) |
-| **macOS (universal-2)** | `saple-macos.dmg`       | [Releases page](https://github.com/smander/saple/releases/latest/download/saple-macos.dmg) |
-| **Linux (Ubuntu / Debian)** | `saple-linux-x64.deb`   | [Releases page](https://github.com/smander/saple/releases/latest/download/saple-linux-x64.deb) |
-| **Linux (CentOS / RHEL / Fedora)** | `saple-linux-x64.rpm` | [Releases page](https://github.com/smander/saple/releases/latest/download/saple-linux-x64.rpm) |
-
-### From this repository
-
-The current build is also tracked here for convenience:
-
-- [`downloads/saple-windows-x64.zip`](downloads/saple-windows-x64.zip) (20 MB)
-- [`downloads/saple-macos.dmg`](downloads/saple-macos.dmg) (25 MB)
-- [`downloads/saple-linux-x64.deb`](downloads/saple-linux-x64.deb) (13 MB)
-- [`downloads/saple-linux-x64.rpm`](downloads/saple-linux-x64.rpm) (14 MB)
+The links always point to the latest release. The same files are tracked in [`downloads/`](downloads/).
 
 ---
 
 ## Install
 
-### Windows (x64)
-
-1. Download `saple-windows-x64.zip` and extract it.
-2. Add the folder containing `saple.exe` to your `PATH`.
-3. Open a new Command Prompt or PowerShell:
-
-```cmd
-saple --version
-```
-
 ### macOS
 
-Mount the DMG and either run the bundled installer or copy the binary manually:
+Mount the DMG, then run the bundled `install.sh` or copy the binary yourself:
 
 ```bash
 hdiutil attach saple-macos.dmg
 sudo install -m 0755 /Volumes/SAPLE/saple /usr/local/bin/saple
 hdiutil detach /Volumes/SAPLE
-saple --version
 ```
 
-### Linux (Ubuntu / Debian)
+The binary is unsigned, so Gatekeeper blocks the first run. Open **System Settings → Privacy & Security**, choose **Open Anyway**, then run it again.
+
+### Linux
 
 ```bash
-sudo apt install ./saple-linux-x64.deb
-saple --version
+sudo apt install ./saple-linux-x64.deb   # Ubuntu, Debian
+sudo rpm -i saple-linux-x64.rpm          # Fedora, RHEL, CentOS
 ```
 
-### Linux (CentOS / RHEL / Fedora)
+The binary is fully static (musl libc, Z3 bundled), so it needs no system packages.
+
+### Windows
+
+Unzip `saple-windows-x64.zip` and add the folder containing `saple.exe` to your `PATH`.
+
+### Check it runs
 
 ```bash
-sudo rpm -i saple-linux-x64.rpm
 saple --version
 ```
-
-The Linux binary is fully static (musl libc, Z3 4.16.0 bundled) — no system dependencies.
-
-The macOS binary is unsigned. On first run Gatekeeper will block it; open **System Settings → Privacy & Security** and click **Open Anyway**, then re-run.
 
 ---
 
 ## Your first analysis
 
-The dining philosophers — five agents, five forks, three properties to verify:
+Save this model as `turnstile.spl`. It describes a coin-operated turnstile and states that every coin should buy one pass:
 
-```bash
-saple analyze dining_philosophers.spl --verbose
+```spl
+// Every coin should buy one pass.
+type Gate = { LOCKED, UNLOCKED } ;
+
+schema Turnstile {
+    attributes {
+        gate   : Gate = LOCKED ;
+        coins  : Int  = 0 ;
+        passes : Int  = 0 ;
+    }
+}
+
+transition coin() { guard: coins < 2 ;
+    effect: coins += 1 ; gate := UNLOCKED ; }
+transition push() { guard: gate == UNLOCKED ;
+    effect: passes += 1 ; gate := LOCKED ; }
+
+agent Controller() {
+    attributes { }
+    process {
+        Locked   = [coins < 2]  coin() . Unlocked
+                 + [coins == 2] done ;
+        Unlocked = push() . Locked
+                 + coin() . Unlocked ;
+    }
+}
+
+system Entrance {
+    schema: Turnstile ;
+    agents { Controller() ; }
+    properties { noLostCoin : coins <= passes + 1 ; }
+}
 ```
 
-Properties checked:
+Then run:
 
-- `noDeadlock` — some philosopher can always act
-- `mutualExclusion` — adjacent philosophers never eat simultaneously
-- `progress` — at least one philosopher can eventually eat
+```bash
+saple analyze turnstile.spl
+```
+
+SAPLE finds the run that breaks the property: two coins and no pass. The command exits with status 1, and its report includes:
+
+```
+  1 finding(s):
+
+  1. [PROPERTY] HIGH — Property 'noLostCoin' violated
+     Property: noLostCoin
+     Trace: coin → coin
+```
+
+The docs walk through larger models: dining philosophers, MESI cache coherence, proof-of-stake consensus, a token contract, and security examples. See [Examples](https://saple.cloud/examples).
 
 ---
 
 ## What SAPLE does
 
-- **Process algebra.** Schemas, transitions, agents, and behaviour equations. Sequential, choice, parallel, and guarded composition are first-class.
-- **Any property.** Safety, liveness, mutual exclusion, deadlock freedom, or your own pattern. Nothing is hardcoded.
-- **SMT solving (Z3).** Constraint satisfiability rules out false positives. Symbolic execution checks property violations against concrete or symbolic state.
-- **Rule extraction.** Findings become reusable, cross-validated rules — exportable as JSON for downstream tooling or digital-twin integration.
+- **One language for state, behaviour and requirements.** An SPL model is built from these parts:
+  - **schemas:** shared typed state, including integers, Booleans, enumerations, collections and bit-vectors;
+  - **transitions:** guarded atomic updates of that state;
+  - **agents:** process equations over transitions, built with prefix `.`, choice `+`, parallel `||`, guards and recursion;
+  - **systems:** the agents that run together and the properties to check;
+  - **patterns:** behaviours to look for, each with constraints and a severity.
+- **Checking.** SAPLE walks the process equations over the state and reports every property that fails, with the trace that breaks it. It also reports every pattern that matches, and uses Z3 to decide whether the pattern's constraints can hold.
+- **Known limitations** are documented on each language page, so you can see exactly what is checked today.
 
-### Supported input representations
-
-Two front ends turn machine code into SPL models and check them the same way:
+### Front ends for machine code
 
 | Front end | Input | Flag |
 |---|---|---|
-| [Intel x86-64 Model](https://saple.cloud/docs/frontends/x86-64) | a static Intel-syntax assembly listing; every path checked on bit-vector semantics | `--arch x86-64` |
-| [AArch64 Model](https://saple.cloud/docs/frontends/aarch64) | a trace-v1 recording of one run; each match graded VERIFIED, OBSERVED, UNKNOWN or REFUTED | `--arch aarch64` |
+| [Intel x86-64 Model](https://saple.cloud/docs/frontends/x86-64) | A static Intel-syntax listing of one function. Every path is checked on bit-vector semantics, with data flow along the path and conditional jumps as guards. | `--arch x86-64` |
+| [AArch64 Model](https://saple.cloud/docs/frontends/aarch64) | A trace-v1 recording of one run. Each pattern match is graded VERIFIED, OBSERVED, UNKNOWN or REFUTED. | `--arch aarch64` |
+
+The front ends match pattern libraries (the `patterns/` files described in the docs). Those libraries are not part of the binary packages or this repository yet.
 
 ---
 
 ## CLI commands
 
 ```bash
-saple parse     file.spl                # Parse and print AST
-saple analyze   file.spl                # Verify properties + match patterns
-saple translate listing.txt --arch x86-64 -o out.spl   # x86-64 listing to SPL
-saple translate run.json --arch aarch64 -o out.spl     # AArch64 trace to SPL
+saple parse     model.spl                 # parse and print a declaration summary
+saple analyze   model.spl                 # check properties and match patterns
+saple translate listing.txt --arch x86-64 -o out.spl    # x86-64 listing to SPL
+saple translate run.json --arch aarch64 -o out.spl      # AArch64 trace to SPL
+saple compose   ...                       # compose patterns into chain patterns
+saple trace     ...                       # inspect and replay captured run traces
 ```
 
-See the [full CLI reference](https://saple.cloud/docs/getting-started/cli) on the docs site.
+Every command and flag is in the [CLI reference](https://saple.cloud/docs/getting-started/cli).
 
 ---
 
