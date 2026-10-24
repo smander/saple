@@ -2,6 +2,34 @@
 
 All notable changes to SAPLE are documented here.
 
+## v0.3.0 — 2026-10-24
+
+### The language is SPL
+
+- Model files use the `.spl` extension; `.sbl` is no longer accepted.
+- The `translate` JSON output key is now `spl` (was `sbl`).
+
+### Front ends named by architecture
+
+- `--arch x86-64` is now the static bit-vector front end for Intel x86-64 listings. It checks every path, with data flow along the path, conditional jumps as guards, curated libc callees and an explicit SysV entry assumption.
+- `--arch aarch64` is the AArch64 trace verifier. Each pattern match is graded VERIFIED, OBSERVED, UNKNOWN or REFUTED.
+- The older x86 translator is available as `--arch x86-64-legacy`. The old names `x86-64-bv` and `trace-aarch64` still work and print a note. An unknown `--arch` warns before falling back.
+
+### Analysis
+
+- Bit-vector pattern constraints (pattern set v0.6) are now checked instead of being dropped.
+- Every embedding of a pattern is checked. `--path-budget` caps the paths per pattern; work cut short is reported UNKNOWN, never dropped.
+- `ConcreteUndecided` is a new finding source (verdict UNKNOWN).
+- **Exit status:** 1 when a finding was confirmed by replay, or when a CRITICAL or HIGH finding is UNKNOWN.
+- **New JSON fields** (additive): `assumptions`, `unconstrained_register_binders`, `minimization_metric.note`, `attack_witness.trace_length`.
+- A time limit of 0 now means "no time", not "unlimited".
+- **Corrected example results**, because unknown values are now symbolic, not 0: `cache_coherence` gains `dataRace`; `token_contract` gains `approvalRace` and `integerOverflow`.
+
+### Packages
+
+- **Rebuilt** with Z3 4.16.0 statically linked: `saple-windows-x64.zip`, `saple-macos.dmg` (universal: Apple silicon and Intel), `saple-linux-x64.deb`, `saple-linux-x64.rpm`.
+- The binary's internal version string remains 0.2.0.
+
 ## v0.2.3 — 2026-09-19
 
 ### CLI naming

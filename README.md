@@ -27,10 +27,10 @@ Prebuilt binaries are available below. Both bundle Z3 4.16.0 statically — no e
 
 The current build is also tracked here for convenience:
 
-- [`downloads/saple-windows-x64.zip`](downloads/saple-windows-x64.zip) (18 MB)
-- [`downloads/saple-macos.dmg`](downloads/saple-macos.dmg) (21 MB)
-- [`downloads/saple-linux-x64.deb`](downloads/saple-linux-x64.deb) (11 MB)
-- [`downloads/saple-linux-x64.rpm`](downloads/saple-linux-x64.rpm) (12 MB)
+- [`downloads/saple-windows-x64.zip`](downloads/saple-windows-x64.zip) (20 MB)
+- [`downloads/saple-macos.dmg`](downloads/saple-macos.dmg) (25 MB)
+- [`downloads/saple-linux-x64.deb`](downloads/saple-linux-x64.deb) (13 MB)
+- [`downloads/saple-linux-x64.rpm`](downloads/saple-linux-x64.rpm) (14 MB)
 
 ---
 
@@ -102,15 +102,12 @@ Properties checked:
 
 ### Supported input representations
 
-Translate from other formats into SPL and verify them the same way:
+Two front ends turn machine code into SPL models and check them the same way:
 
-| Frontend | Flag |
-|---|---|
-| x86-64 assembly | `--arch x86-64` |
-| ARM64 / AArch64 assembly | `--arch arm64` |
-| Clang / LLVM IR (C, C++, Rust) | `--arch clang` |
-| VHDL hardware description | `--arch vhdl` |
-| Blockchain smart contracts | `--arch blockchain` |
+| Front end | Input | Flag |
+|---|---|---|
+| [Intel x86-64 Model](https://saple.cloud/docs/frontends/x86-64) | a static Intel-syntax assembly listing; every path checked on bit-vector semantics | `--arch x86-64` |
+| [AArch64 Model](https://saple.cloud/docs/frontends/aarch64) | a trace-v1 recording of one run; each match graded VERIFIED, OBSERVED, UNKNOWN or REFUTED | `--arch aarch64` |
 
 ---
 
@@ -119,10 +116,8 @@ Translate from other formats into SPL and verify them the same way:
 ```bash
 saple parse     file.spl                # Parse and print AST
 saple analyze   file.spl                # Verify properties + match patterns
-saple model     file.spl --mode forward # Symbolic state-space exploration
-saple match     file.spl --pattern p.spl
-saple test      file.spl --coverage state
-saple translate input.s --arch x86-64 -o out.spl
+saple translate listing.txt --arch x86-64 -o out.spl   # x86-64 listing to SPL
+saple translate run.json --arch aarch64 -o out.spl     # AArch64 trace to SPL
 ```
 
 See the [full CLI reference](https://saple.cloud/docs/getting-started/cli) on the docs site.
